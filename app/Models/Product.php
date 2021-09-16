@@ -11,7 +11,7 @@ class Product extends Model
       protected $fillable =['product_name','product_discount', 'product_price','product_cover_image','product_description', 'discount_start_date','discount_end_date', 'slug'];
 
      // protected $hidden = ['app_price'];
-      protected $appends = ["description_short", "title_short", "is_discount_active","price_before_discount","price_after_discount", "price_after_discount_numeric", "in_reservedlist"];
+      protected $appends = ["description_short","is_discount_active","price_before_discount","price_after_discount", "price_after_discount_numeric", "in_reservedlist"];
     /**
      * Mutators
      */

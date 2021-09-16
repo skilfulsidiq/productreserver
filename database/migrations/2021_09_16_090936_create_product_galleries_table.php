@@ -18,7 +18,6 @@ class CreateProductGalleriesTable extends Migration
             $table->foreignId('product_id')->constrained('products');
             $table->text('file_url')->nullable();
             $table->timestamps();
-            $table->timestamps();
         });
     }
 

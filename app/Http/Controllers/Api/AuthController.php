@@ -35,6 +35,7 @@ class AuthController extends BaseController
                 $user->last_login_ip = $ip;
                 $user->save();
                 $token =$user->createToken($tokenword);
+
                 $data = ['user' =>$user, 'token' => $token->plainTextToken];
                 // $tokenData =  $token->plainTextToken;
                 return $this->sendSuccess($data,'Loggedin successful');
@@ -78,7 +79,8 @@ class AuthController extends BaseController
             } catch (\Exception $e) {
                 Log::debug('Error sending mail to '.$user->email);
             }
-            $data = ['user' =>$user, 'token' => $token->plainTextToken];
+
+            $data = ['user' =>$user,  'token' => $token->plainTextToken];
             return $this->sendSuccess($data,'Account created successfully');
         }catch(\Exception $e){
               Log::debug('Error registing '.$e->getMessage());
@@ -93,6 +95,7 @@ class AuthController extends BaseController
         }
         $email = $request['email'];
         $user = User::where(['email'=>$email])->first();
+
         $verify_code = mt_rand(100000, 999999);
 		if(!empty($user)){
             $user->verify_code = $verify_code;
@@ -100,11 +103,12 @@ class AuthController extends BaseController
             $delay = Carbon::now()->addMinutes(1);
             try {
                 $user->notify((new ForgotPasswordNotification($user))->delay($delay));
+
                 return $this->sendSuccess($user,'An email has been sent to '. $user->email);
 
             } catch (\Exception $e) {
                  Log::debug('Error registing '.$e->getMessage());
-
+                 return $this->sendError('Error','Mail to'. $user->email." try again");
             }
         }
         return $this->sendError( 'Error','This account does not exist');
@@ -144,7 +148,7 @@ class AuthController extends BaseController
 			$user->is_verified = 1;
             $user->save();
             // $data = ['is_verified'=>$user->is_verified,'user'=>$user];
-            return $this->sendSuccess($user->code,'code matched');
+            return $this->sendSuccess($user,'code matched');
 		}
         return $this->sendError('Error','Wrong code, enter the code sent to yr mail');
 
@@ -167,5 +171,10 @@ class AuthController extends BaseController
             }
         }
         return $this->sendError('Error', $user->email.' does not exist');
+    }
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+
+        return $this->sendSuccess(true,'Successfullylogout');
     }
 }

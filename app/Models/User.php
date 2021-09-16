@@ -29,7 +29,7 @@ class User extends Authenticatable
         'last_login_ip',
         'slug'
     ];
-
+    protected $appends=['is_admin'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -57,6 +57,17 @@ class User extends Authenticatable
     }
      public function setPasswordAttribute($value){
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    /**Acceser */
+    public function getIsAdminAttribute(){
+        return $this->hasRole('Admin');
+    }
+    public function getIsVerifiedAttribute(){
+        if($this->attributes['is_verified']==1){
+            return true;
+        }
+        return false;
     }
     /**
      * Relationship

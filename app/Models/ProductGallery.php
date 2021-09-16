@@ -15,6 +15,6 @@ class ProductGallery extends Model
     }
 
     public function getFileUrlAttribute(){
-        return url($this->file_url);
+        return url($this->attributes['file_url']);
     }
 }

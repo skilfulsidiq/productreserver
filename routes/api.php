@@ -22,29 +22,30 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
         Route::post('login','AuthController@login');
         Route::post('register','AuthController@register');
-        Route::post('forgot-password','AuthController@forgot_password');
+        Route::post('forgot-password','AuthController@forgotPassword');
         Route::post('change-password-code','AuthController@changePasswordWithCode');
 
         Route::group(['middleware'=>['auth:sanctum']],function(){
              //verify email
             Route::post('verify-email','AuthController@verifyEmail');
+            Route::post('logout','AuthController@logout');
             //resend code
             Route::get('resend-code','AuthController@resendVerificationCode');
              //product list
             Route::get('all-products','ProductController@productList');
              //reserve a product
-            Route::post('reserve-products','ReserveProductController@reserveForAProduct');
+            Route::get('reserve-products/{id}','ReserveProductController@reserveForAProduct');
              //user reserved products lists
             Route::get('all-reserved-products','ReserveProductController@userReservedProducts');
 
              //admin
-            Route::group(['prefix'=>'admin'],function(){
+            Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
 
                 //product list
                 Route::get('all-products','ProductController@adminProductList');
 
                 //addorupdate proudcy
-                Route::get('update-product/{slug?}','ProductController@addOrUpdateProduct');
+                Route::post('update-product/{slug?}','ProductController@addOrUpdateProduct');
 
                 //delete product
                 Route::delete('delete-product/{slug}','ProductController@deleteProduct');
@@ -55,7 +56,7 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
                 //user list
                 Route::get('all-users','UserController@allUsers');
                 //update user
-                Route::get('update-user/{slug?}','UserController@updateUser');
+                Route::post('update-user/{slug?}','UserController@updateUser');
                 //delete user
                 Route::delete('delete-user/{slug}','UserController@deleteUser');
 
