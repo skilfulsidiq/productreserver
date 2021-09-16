@@ -27,7 +27,9 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
         Route::group(['middleware'=>['auth:sanctum']],function(){
              //verify email
-            Route::post('verify-email','AuthController@login');
+            Route::post('verify-email','AuthController@verifyEmail');
+            //resend code
+            Route::get('resend-code','AuthController@resendVerificationCode');
              //product list
             Route::get('all-products','ProductController@productList');
              //reserve a product
@@ -40,7 +42,7 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
                 //product list
                 Route::get('all-products','ProductController@adminProductList');
-                
+
                 //addorupdate proudcy
                 Route::get('update-product/{slug?}','ProductController@addOrUpdateProduct');
 

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laratrust\Traits\LaratrustUserTrait;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
@@ -50,9 +51,12 @@ class User extends Authenticatable
     /**
        * Mutations
     **/
-      public function setNameAttribute($v){
+    public function setNameAttribute($v){
         $this->attributes['name'] = $v;
         $this->attributes['slug'] = Str::slug($v);
+    }
+     public function setPasswordAttribute($value){
+        $this->attributes['password'] = Hash::make($value);
     }
     /**
      * Relationship
