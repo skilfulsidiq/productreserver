@@ -6,11 +6,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laratrust\Traits\LaratrustUserTrait;
 use Laravel\Sanctum\HasApiTokens;
-
+use Illuminate\Support\Str;
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, LaratrustUserTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'verify_code',
+        'is_verified',
+        'last_login_at',
+        'last_login_ip',
+        'slug'
     ];
 
     /**
@@ -41,4 +47,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    /**
+       * Mutations
+    **/
+      public function setNameAttribute($v){
+        $this->attributes['name'] = $v;
+        $this->attributes['slug'] = Str::slug($v);
+    }
+    /**
+     * Relationship
+     */
+    public function products(){
+        return $this->belongsToMany(Product::class,'product_reserves','user_id','product_id');
+    }
 }
