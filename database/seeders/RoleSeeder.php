@@ -22,7 +22,9 @@ class RoleSeeder extends Seeder
         $admin = User::create([
             'name'=>'Super Admin',
             'email'=>'admin@test.com',
-            'password'=>'password'
+            'password'=>'password',
+            'verify_code'=>234567,
+            'is_verified'=>1,
         ]);
         $admin->attachRole('Admin');
 

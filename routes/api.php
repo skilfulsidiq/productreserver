@@ -41,8 +41,12 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
              //admin
             Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
+                Route::get('dashboard','ProductController@adminDashboard');
+
 
                 //product list
+                
+                
                 Route::get('all-products','ProductController@productList');
 
                 //addorupdate proudcy
@@ -54,6 +58,8 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
                 //view all reserved products
                 Route::get('all-reserved-products','ReserveProductController@allReservedProducts');
 
+                //roles list
+                 Route::get('all-roles','UserController@allRoles');
                 //user list
                 Route::get('all-users','UserController@allUsers');
                 //update user

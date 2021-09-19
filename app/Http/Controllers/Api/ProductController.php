@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Product;
+use App\Models\User;
+use App\Models\ProductReserve;
 use App\Models\ProductGallery;
 use App\Traits\UploadAble;
 use Carbon\Carbon;
@@ -19,7 +21,14 @@ class ProductController extends BaseController
      * Admin funcitonalities
      */
     //all products
-    public function adminProductList(){}
+    public function adminDashboard(){
+
+        $product = Product::count();
+        $user = User::count();
+        $reserved = ProductReserve::count();
+        $data = ['total_products'=>$product,'total_users'=>$user,'total_reserveds'=>$reserved];
+         return $this->sendSuccess($data,'Dashboard data');
+    }
 
     //Admin add or update product
     public function addOrUpdateProduct(Request $request,$slug=null){
@@ -31,38 +40,43 @@ class ProductController extends BaseController
 
             $new_name = "";
             if($slug==null){
-                //  $new_name    = substr(str_replace(' ', '', $request['product_name']), 3, 3);
                 $validator_two = Validator::make($request->all(),[
-                    'images.*'=>'required|mimes:png,jpg,jpeg|max:1048'
+                    'image.*'=>'required|mimes:png,jpg,jpeg|max:1048'
                 ]);
                 if ($validator_two->fails()) {
                     return $this->sendError('Validation Error',[ $validator->errors()],403);
                 }
 
             }
-            $images = [];
-            if($request['images']){
-                $images = $request['images'];
-            }
+            // $images = [];
+            // if($request['images']){
+            //     $images = $request['images'];
+            // }
+
 
         $only = $request->only(['product_name','product_discount', 'product_price','product_cover_image','product_description', 'discount_start_date','discount_end_date']);
         $only['discount_start_date'] = $this->formatIncomingDate($request['discount_start_date']);
         $only['discount_end_date'] = $this->formatIncomingDate($request['discount_end_date']);
+        if($request->hasFile('image')){
+                    $img = $request['image'];
+                    $path = $this->uploadFile($img,'products');
+                    $only['product_cover_image'] = $path;
+                }
         try {
             DB::beginTransaction();
              $product = Product::updateOrCreate(['slug'=>$slug], $only);
             //   dd($images);
-             if(!empty($images)){
-                foreach($images as $img){
-                     $path = $this->uploadFile($img,'products');
-                     $p = ProductGallery::create([
-                        'product_id'=>$product->id,
-                        'file_url'=>$path
-                     ]);
+             // if(!empty($images)){
+             //    foreach($images as $img){
+             //         $path = $this->uploadFile($img,'products');
+             //         $p = ProductGallery::create([
+             //            'product_id'=>$product->id,
+             //            'file_url'=>$path
+             //         ]);
 
 
-                 }
-             }
+             //     }
+             // }
             DB::commit();
             return $this->sendSuccess($product,'product updated successfully');
         } catch (\Exception $th) {
@@ -74,6 +88,13 @@ class ProductController extends BaseController
     //delete a product using
     public function deleteProduct($slug){
         $product = Product::where('slug', $slug)->first();
+        // $product->users()->delete();
+        $res = ProductReserve::where('product_id',$product->id)->get();
+        if(!empty($res)){
+            foreach($res as $r){
+                $r->delete();
+            }
+        }
         if($product->delete()){
             return $this->sendSuccess($product,'product deleted successfully');
         }
@@ -82,11 +103,11 @@ class ProductController extends BaseController
 
     /**All users */
     public function productinatedPagList(){
-        $products = Product::with('gallery')->paginate(10);
+        $products = Product::with('gallery')->orderBy('created_at','desc')->paginate(10);
         return $this->sendSuccess($products,"All Products");
     }
     public function productList(){
-        $products = Product::with('gallery')->get();
+        $products = Product::with('gallery')->orderBy('created_at','desc')->get();
         return $this->sendSuccess($products,"All Products");
     }
 

@@ -23,7 +23,10 @@ class Product extends Model
         $this->attributes['product_price'] = (int)str_replace(',','',$value);
     }
 
-
+    // public funciton getProductCover
+     public function setProductCoverImageAttribute($value){
+        $this->attributes['product_cover_image'] = url($value);
+    }
     /**
      * Relationship
      */
