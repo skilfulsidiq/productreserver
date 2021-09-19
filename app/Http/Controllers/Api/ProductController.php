@@ -81,6 +81,10 @@ class ProductController extends BaseController
     }
 
     /**All users */
+    public function productinatedPagList(){
+        $products = Product::with('gallery')->paginate(10);
+        return $this->sendSuccess($products,"All Products");
+    }
     public function productList(){
         $products = Product::with('gallery')->get();
         return $this->sendSuccess($products,"All Products");

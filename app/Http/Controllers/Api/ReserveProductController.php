@@ -21,6 +21,13 @@ class ReserveProductController extends BaseController
         // $product= Product::where('id',$product_id)->first();
         $user->products()->syncWithoutDetaching([$product_id]);
         return $this->sendSuccess('Product reserved','Product reserve');
+    } 
+    public function unReserveForAProduct($product_id){
+        $user = User::where('id',Auth::id())->first();
+        // $product_id = $request['product_id'];
+        // $product= Product::where('id',$product_id)->first();
+        $user->products()->detach($product_id);
+        return $this->sendSuccess('Product reserved','Product reserve');
     }
     public function userReservedProducts(){
          $user = Auth::user();

@@ -32,9 +32,10 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
             //resend code
             Route::get('resend-code','AuthController@resendVerificationCode');
              //product list
-            Route::get('all-products','ProductController@productList');
+            Route::get('all-products','ProductController@productinatedPagList');
              //reserve a product
             Route::get('reserve-products/{id}','ReserveProductController@reserveForAProduct');
+            Route::get('unreserve-products/{id}','ReserveProductController@unReserveForAProduct');
              //user reserved products lists
             Route::get('all-reserved-products','ReserveProductController@userReservedProducts');
 
@@ -42,7 +43,7 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
             Route::group(['prefix'=>'admin','middleware'=>'isAdmin'],function(){
 
                 //product list
-                Route::get('all-products','ProductController@adminProductList');
+                Route::get('all-products','ProductController@productList');
 
                 //addorupdate proudcy
                 Route::post('update-product/{slug?}','ProductController@addOrUpdateProduct');
