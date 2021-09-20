@@ -13,10 +13,48 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\Stmt\TryCatch;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends BaseController
 {
+    protected function validateProvider($provider){
+        if(!in_array($provider,['facebook','google'])){
+            return $this->sendError('Error','Please login in using facebook or google',422);
+        }
+    }
+    public function redirectToProvider($provider){
+        $validated = $this->validateProvider($provider);
+        if(!is_null($validated)){
+            return $validated;
+        }
+        return Socialite::driver($provider)->stateless()->redirect();
+    }
+    public function solvedProviderCallback($provider){
+        $validated = $this->validateProvider($provider);
+        if(!is_null($validated)){
+            return $validated;
+        }
+        try{
+            $user = Socialite::driver($provider)->stateless()->user();
+        }catch(\Exception $e){
+            return $this->sendError('Error','Invalid credential provided',401);
+        }
+        $createdUser= User::firstOrCreate(['email'=>$user->getEmail()],[
+            'name'=>$user->getName(),
+            'email_verified_at'=>now(),
+            'is_verified'=>1,
+            'verify_code'=>mt_rand(100000, 999999)
+        ]);
+        $createdUser->provider()->updateOrCreate([
+            'provider'=>$provider,
+            'provider_id'=>$user->getId()
+        ],['avatar'=>$user->getAvatar()]
+        );
+          $token =$createdUser->createToken('token-word');
+        
+        $data = ['user' =>$user, 'token' => $token->plainTextToken];
+        return $this->sendSuccess($data,'Loggedin successful');
+    }
     public function login(Request $request){
         $validator = Validator::make($request->all(),['email' => 'required|email','password' => 'required']);
 

@@ -75,4 +75,7 @@ class User extends Authenticatable
     public function products(){
         return $this->belongsToMany(Product::class,'product_reserves','user_id','product_id');
     }
+    public function provider(){
+        return $this->hasMany(Provider::class,'user_id');
+    }
 }

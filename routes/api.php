@@ -20,6 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
+        Route::post('login/{provider}','AuthController@redirectToProvider');
+        Route::post('login/{provider}/callback','AuthController@solvedProviderCallback');
+        
         Route::post('login','AuthController@login');
         Route::post('register','AuthController@register');
         Route::post('forgot-password','AuthController@forgotPassword');
@@ -45,8 +48,8 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
 
                 //product list
-                
-                
+
+
                 Route::get('all-products','ProductController@productList');
 
                 //addorupdate proudcy

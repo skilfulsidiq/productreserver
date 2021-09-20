@@ -88,13 +88,13 @@ class ProductController extends BaseController
     //delete a product using
     public function deleteProduct($slug){
         $product = Product::where('slug', $slug)->first();
-        // $product->users()->delete();
-        $res = ProductReserve::where('product_id',$product->id)->get();
-        if(!empty($res)){
-            foreach($res as $r){
-                $r->delete();
-            }
-        }
+        $product->users()->delete();
+        // $res = ProductReserve::where('product_id',$product->id)->get();
+        // if(!empty($res)){
+        //     foreach($res as $r){
+        //         $r->delete();
+        //     }
+        // }
         if($product->delete()){
             return $this->sendSuccess($product,'product deleted successfully');
         }
