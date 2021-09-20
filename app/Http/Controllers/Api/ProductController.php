@@ -107,7 +107,7 @@ class ProductController extends BaseController
         return $this->sendSuccess($products,"All Products");
     }
     public function productList(){
-        $products = Product::with('gallery')->orderBy('created_at','desc')->get();
+        $products = Product::with('gallery')->orderBy('created_at','desc')->paginate(10);
         return $this->sendSuccess($products,"All Products");
     }
 

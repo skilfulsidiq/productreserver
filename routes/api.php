@@ -28,8 +28,8 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
         Route::post('forgot-password','AuthController@forgotPassword');
         Route::post('change-password-code','AuthController@changePasswordWithCode');
 
-           //product list
-            Route::get('all-products','ProductController@productinatedPagList');
+        //product list
+        Route::get('all-products','ProductController@productinatedPagList');
 
         Route::group(['middleware'=>['auth:sanctum']],function(){
              //verify email
