@@ -22,11 +22,14 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
 
         Route::post('login/{provider}','AuthController@redirectToProvider');
         Route::post('login/{provider}/callback','AuthController@solvedProviderCallback');
-        
+
         Route::post('login','AuthController@login');
         Route::post('register','AuthController@register');
         Route::post('forgot-password','AuthController@forgotPassword');
         Route::post('change-password-code','AuthController@changePasswordWithCode');
+
+           //product list
+            Route::get('all-products','ProductController@productinatedPagList');
 
         Route::group(['middleware'=>['auth:sanctum']],function(){
              //verify email
@@ -34,8 +37,7 @@ Route::group(['namespace'=>'App\Http\Controllers\Api'],function(){
             Route::post('logout','AuthController@logout');
             //resend code
             Route::get('resend-code','AuthController@resendVerificationCode');
-             //product list
-            Route::get('all-products','ProductController@productinatedPagList');
+
              //reserve a product
             Route::get('reserve-products/{id}','ReserveProductController@reserveForAProduct');
             Route::get('unreserve-products/{id}','ReserveProductController@unReserveForAProduct');
